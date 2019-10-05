@@ -75,8 +75,8 @@ class encryptMine:
                     strCompare = message[j]+message[j+1]
                     if(strCurrent == strCompare):
                          # print(strCurrent, strCompare, j-i)
-                          strCurrent = message[i]+message[i+1]+message[i+2]
-                          strCompare = message[j]+message[j+1]+message[i+2]
+                          strCurrent = strCurrent+message[i+2]
+                          strCompare = strCompare+message[i+2]
                           if(strCurrent == strCompare):                              
                               if not (j-i) in listNumbers:
                                   #print(strCurrent, strCompare, j-i)
@@ -84,9 +84,62 @@ class encryptMine:
                                   listSequences.append(strCurrent)
         zipListNumbers = zip(listNumbers, listSequences)
         dictionaryKey = dict(zipListNumbers)
-        #print(dictionaryKey)
-        listGCD = self.pickValuesToFoundGCD(self.countApparitions(dictionaryKey),dictionaryKey)
-        print(listGCD)
+        keyLength = self.possibleKeyLength(self.possibleKeyLengthArray(list(dictionaryKey.keys())))
+        self.getSubCriptograms(keyLength,message)
+       # listGCD = self.pickValuesToFoundGCD(self.countApparitions(dictionaryKey),dictionaryKey)
+       # print(listGCD)
+
+    def possibleKeyLengthArray(self,repeatedSequence):
+        print(repeatedSequence)
+        m = 20
+        n = len(repeatedSequence)
+        listPossibleKeys = [0] * n
+        for x in range (n):
+            listPossibleKeys[x] = [0] * m
+        
+        for i in range(0,n):
+            for j in range(0,m):
+                if(repeatedSequence[i]%(j+1) == 0):
+                    listPossibleKeys[i][j] = 1
+                else:
+                     listPossibleKeys[i][j] = 0
+       
+        return listPossibleKeys
+
+    def possibleKeyLength(self, listPossibleKeys):
+        print(listPossibleKeys)
+        listCountPossibles = []
+        for i in range(0,len(listPossibleKeys[0])):
+            countRepeat = 0
+            for k in range(0,len(listPossibleKeys)):
+                if(listPossibleKeys[k][i] == 1):
+                    countRepeat += 1
+            listCountPossibles.append(countRepeat)
+        return self.getBiggest(listCountPossibles)
+
+    def getBiggest(self,listNumbers):
+        print(listNumbers)
+        mayor = 0
+        pos = 0
+        for i in range(3,len(listNumbers)):
+            if(mayor<listNumbers[i]):
+                mayor = listNumbers[i]
+                pos = i
+        print("size key: ",pos+1)
+        return  pos+1
+
+    def getSubCriptograms(self, jumps,message):     
+        startRoute = 0
+        k  = int(0)
+        for i in range(0,jumps):
+            subCriptogram = ""
+            k = i
+            while k<len(message):                
+                subCriptogram += message[k]
+                k = k+jumps
+            startRoute = startRoute+1
+            print(subCriptogram)
+
 
     def GCD(self,a, b):
         if b == 0:
@@ -113,6 +166,7 @@ class encryptMine:
         sortedValuesList = list(sorted_dict.keys())
         enumKeylist = dict(enumerate(sortedValuesList))    
         listToCombinations = {enumKeylist[len(enumKeylist)-1],enumKeylist[len(enumKeylist)-2],enumKeylist[len(enumKeylist)-3],enumKeylist[len(enumKeylist)-4]}
+      #  print(ziplistWtRepets,listApparitions,listToCombinations,enumKeylist,sortedValuesList)
         return list(listToCombinations)
     
 
